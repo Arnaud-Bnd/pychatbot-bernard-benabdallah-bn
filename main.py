@@ -1,0 +1,92 @@
+import os
+
+
+def list_of_files(directory, extension):
+    files_names = [] # créer une liste qui va contenir les noms des fichiers
+    for filename in os.listdir(directory):
+        if filename.endswith(extension): # selection seulement les fichiers textes
+            files_names.append(filename) # ajoute les noms des fichiers textes à la liste files_names
+    return files_names
+
+# Call of the function
+
+directory = "./speeches"
+files_names = list_of_files(directory, "txt")
+print(files_names)
+
+
+# Extraire nom président
+def extract_name(liste): # extrait seulement le nom de chaque président à partir du nom des fichiers textes
+    for i in range(len(liste)):
+        liste[i] = liste[i][11:-4] # enlève le "Nomination_" et le ".txt"
+        if '1' in liste[i] or '2' in liste[i]:
+            liste[i] = liste[i][:-1] # enlève le "1" et le "2" s'il y a plusieurs fichiers pour un même président
+    return liste
+
+# Call of the function
+"""
+extract_name(files_names)
+print(files_names)
+"""
+
+
+# Associer prénom président
+def name_pres(): # Créer un dictionnaire qui associe un prénom au nom du président
+    prenom_nom = {'Chirac' : 'Jacques',
+                  'Mitterrand' : 'François',
+                  'Sarkozy' : 'Nicolas',
+                  'Macron' : 'Emmanuel',
+                  'Giscard dEstaing' : 'Valéry',
+                  }
+    return prenom_nom
+"""    for i in range (len(liste)):
+        if (liste[i] == 'Chirac'):
+            liste[i] = 'Jacques Chirac'
+        elif (liste[i] == 'Mitterrand'):
+            liste[i] = 'François Mitterrand'
+        elif (liste[i] == 'Sarkozy'):
+            liste[i] = 'Nicolas Sarkozy'
+        elif (liste[i] == 'Macron'):
+            liste[i] = 'Emmanuel Macron'
+        elif (liste[i] == 'Giscard dEstaing'):
+            liste[i] = 'Valéry Giscard dEstaing'
+        elif (liste[i] == 'Hollande'):
+            liste[i] = 'François Hollande'
+"""
+
+# Call of the function
+"""
+print(name_pres())
+"""
+
+
+# Extraire nom président + numéro discours
+def extract_name_file(liste): # extrait le nom du président et le numéro s'il y en a un (sera utile pour parcours les fichiers)
+    for i in range(len(liste)):
+        liste[i] = liste[i][11:-4]
+    return liste
+
+
+# Mettre en minuscule
+def minuscule(mot): # met tous les caractères alphabétiques en minuscule
+    nouveau_mot = "" # créer une nouvelle chaîne de caractère pour conserver l'ancienne
+    nouveau_mot = list(nouveau_mot) # convertie la chaîne de caractère en liste
+    mot = list(mot) # convertie la chaîne de caractère en liste
+    for i in range(len(mot)):
+        if (ord('A') <= ord(mot[i])) and (ord(mot[i]) <= ord('Z')): # sélectionne uniquement les caractères en majuscule
+            mot[i] = chr(ord(mot[i]) + (ord('a') - ord('A'))) # convertion en minuscule
+        nouveau_mot.append(mot[i]) # ajoute à la nouvelle chaîne de caractère
+    return ''.join(nouveau_mot) # reconvertie la liste en chaîne de caractère
+
+#print(minuscule("OUI"))
+
+
+extract_name_file(files_names)
+for i in range(len(files_names)): # parcours tous les fichiers du répertoire /speeches
+    name_minuscule = 'Nomination_' + str(files_names[i]) + '.txt'
+    with open("./speeches/" + name_minuscule, 'r') as f1:
+        corpus = f1.read()
+    corpus = minuscule(corpus) # convertie le texte du fichier texte en minuscule
+    with open ("./cleaned/Clean_" + name_minuscule, 'w') as f2:
+        f2.write(corpus) # stocke le nouveau contenue en minuscule dans un répertoire /cleaned
+
