@@ -1,4 +1,5 @@
 import os
+import random
 
 
 def list_of_files(directory, extension):
@@ -80,7 +81,29 @@ def minuscule(mot): # met tous les caractères alphabétiques en minuscule
 
 #print(minuscule("OUI"))
 
+def ponctuation(mot):
+    nouveau_mot = "" # créer une nouvelle chaîne de caractère pour conserver l'ancienne
+    nouveau_mot = list(nouveau_mot) # convertie la chaîne de caractère en liste
+    mot = list(mot) # convertie la chaîne de caractère en liste
+    for i in range(len(mot)):
+        #if (ord(mot[i]) == ord('!')) or (ord(mot[i]) == ord('"')) or (ord(mot[i]) == ord('.')) or (ord(mot[i]) == ord(':')) or (ord(mot[i]) == ord(';')) or (ord(mot[i]) == ord('?')): # sélectionne uniquement les caractères de ponctuation
+        if ((ord(mot[i]) >= ord(':')) and (ord(mot[i]) <= ord('@'))) or ((ord(mot[i]) >= ord('!')) and (ord(mot[i]) <= ord('#'))) or ((ord(mot[i]) >= ord('(')) and (ord(mot[i]) <= ord('+'))) or (ord(mot[i]) == ord('.')) or (ord(mot[i]) == ord('/')) or ((ord(mot[i]) >= ord('[')) and (ord(mot[i]) <= ord('^'))) or ((ord(mot[i]) >= ord('{')) and (ord(mot[i]) <= ord('~'))):
+            del mot[i]
+        if (ord(mot[i]) == ord('-')) or (ord(mot[i]) == ord('_')) or (ord(mot[i]) == ord('—')) or (ord(mot[i]) == ord('–')):
+            mot[i] = ' '
+        if (ord(mot[i]) == ord("'")) or (ord(mot[i]) == ord("’")) or (ord(mot[i]) == ord('`')) or (ord(mot[i]) == ord('‘')): # sélectionne uniquement les apostrophes et les tirets
+            var = random.randint(1,2)
+            if (mot[i-1] != ord('l')) or (var % 2 == 0):
+                mot[i] = 'e '
+            else:
+                mot[i] = 'a '
+        nouveau_mot.append(mot[i]) # ajoute à la nouvelle chaîne de caractère
+    return ''.join(nouveau_mot) # reconvertie la liste en chaîne de caractère
 
+#for i in range (20):
+#    print(ponctuation("l'exercice"))
+
+"""
 extract_name_file(files_names)
 for i in range(len(files_names)): # parcours tous les fichiers du répertoire /speeches
     name_minuscule = 'Nomination_' + str(files_names[i]) + '.txt'
@@ -89,4 +112,20 @@ for i in range(len(files_names)): # parcours tous les fichiers du répertoire /s
     corpus = minuscule(corpus) # convertie le texte du fichier texte en minuscule
     with open ("./cleaned/Clean_" + name_minuscule, 'w') as f2:
         f2.write(corpus) # stocke le nouveau contenue en minuscule dans un répertoire /cleaned
+"""
 
+def TF(chaine):
+    dico = {}
+    mot = ""
+    for i in range(len(chaine)):
+        if (chaine[i] != ' '):
+            mot += chaine[i]
+        elif (chaine[i] == ' '):
+            dico[mot] = ""
+            mot = ""
+        else:
+            mot += chaine[i]
+            dico[mot] = ""
+    return dico
+
+print(TF('les exercices sont dur'))
