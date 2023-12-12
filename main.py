@@ -27,7 +27,12 @@ for i in range(Nombre_fichiers):        # parcours tous les fichiers du réperto
         f2.write(contenue)        # stocke le nouveau contenue en minuscule dans un répertoire /cleaned
 
 
+#print(idf("./cleaned/"))
 
+#print(mots_fichiers("./cleaned/"))
+#print(matrice_TF_IDF("./cleaned/"))
+
+"""
 # Afficher la liste des mots les moins importants dans le corpus de documents
 def mini_TF_IDF(matrice_TF_IDF):
     mini = 0
@@ -81,3 +86,5 @@ for i in range(Nombre_fichiers):
                 maxi = contenue[mot]
                 mot_chirac.append(mot)
 print(mot_chirac)
+"""
+
