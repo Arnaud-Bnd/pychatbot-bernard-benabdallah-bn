@@ -3,10 +3,10 @@ import os
 
 
 def list_of_files(directory, extension):
-    files_names = []        # créer une liste qui va contenir les noms des fichiers
+    files_names = []        # Créer une liste qui va contenir les noms des fichiers
     for filename in os.listdir(directory):
-        if filename.endswith(extension):        # selection seulement les fichiers textes
-            files_names.append(filename)        # ajoute les noms des fichiers textes à la liste files_names
+        if filename.endswith(extension):        # Selection seulement les fichiers textes
+            files_names.append(filename)        # Ajoute les noms des fichiers textes à la liste files_names
     return files_names
 
 
@@ -17,11 +17,11 @@ Nombre_fichiers = len(files_names)
 
 
 # Extraire nom président
-def extract_name(liste):        # extrait seulement le nom de chaque président à partir du nom des fichiers textes
+def extract_name(liste):        # Extrait seulement le nom de chaque président à partir du nom des fichiers textes
     for i in range(len(liste)):
-        liste[i] = liste[i][11:-4]      # enlève le "Nomination_" et le ".txt"
+        liste[i] = liste[i][11:-4]      # Enlève le "Nomination_" et le ".txt"
         if '1' in liste[i] or '2' in liste[i]:
-            liste[i] = liste[i][:-1]        # enlève le "1" et le "2" s'il y a plusieurs fichiers pour un même président
+            liste[i] = liste[i][:-1]        # Enlève le "1" et le "2" s'il y a plusieurs fichiers pour un même président
     return liste
 
 
@@ -37,36 +37,37 @@ def name_pres():        # Créer un dictionnaire qui associe un prénom au nom d
 
 
 # Extraire nom président + numéro discours
-def extract_name_file(liste):       #   Extrait le nom du président et le numéro s'il y en a un (sera utile pour parcours les fichiers)
+def extract_name_file(liste):       # Extrait le nom du président et le numéro s'il y en a un (sera utile pour parcours les fichiers)
     for i in range(len(liste)):
         liste[i] = liste[i][11:-4]
     return liste
 
 
 # Mettre en minuscule
-def minuscule(mot):     # met tous les caractères alphabétiques en minuscule
-    nouveau_mot = ""        # créer une nouvelle chaîne de caractère pour conserver l'ancienne
-    nouveau_mot = list(nouveau_mot)     # convertie la chaîne de caractère en liste
-    mot = list(mot)     # convertie la chaîne de caractère en liste
+def minuscule(mot):     # Met tous les caractères alphabétiques en minuscule
+    nouveau_mot = ""        # Créer une nouvelle chaîne de caractère pour conserver l'ancienne
+    nouveau_mot = list(nouveau_mot)     # Convertie la chaîne de caractère en liste
+    mot = list(mot)     # Convertie la chaîne de caractère en liste
     for i in range(len(mot)):
         if (ord('A') <= ord(mot[i])) and (ord(mot[i]) <= ord('Z')):     # Sélectionne uniquement les caractères en majuscule
             mot[i] = chr(ord(mot[i]) + (ord('a') - ord('A')))       # Conversion en minuscule
-        nouveau_mot.append(mot[i])      # ajoute à la nouvelle chaîne de caractère
-    return ''.join(nouveau_mot)     # reconvertie la liste en chaîne de caractère
+        nouveau_mot.append(mot[i])      # Ajoute à la nouvelle chaîne de caractère
+    return ''.join(nouveau_mot)     # Reconvertie la liste en chaîne de caractère
+
 
 #print(minuscule("TEST"))
-"la fonction minuscule fonctionne"
+"La fonction minuscule fonctionne"
 
 
 def ponctuation(mot):       # Supprime tous les signes de ponctuation d'une chaîne de caractère
-    nouveau_mot = ""        # créer une nouvelle chaîne de caractère sans les ponctuations
+    nouveau_mot = ""        # Créer une nouvelle chaîne de caractère sans les ponctuations
     pas_permis = '!#"$%&()*+,./:;<=>?@[\]^{|}≈~-_—–\n'
     apostrophe_list = "'’‘"
     for i in range(len(mot)):
         if mot[i] in pas_permis:
             mot_clean1 = " "
             nouveau_mot += mot_clean1
-        elif mot[i] in apostrophe_list:        # sélectionne uniquement les apostrophes et les tirets
+        elif mot[i] in apostrophe_list:        # Sélectionne uniquement les apostrophes et les tirets
             var = random.randint(1,2)
             if (mot[i-1] != ord('l')) or (var % 2 == 0):
                 mot_clean2 = 'e '
@@ -76,23 +77,24 @@ def ponctuation(mot):       # Supprime tous les signes de ponctuation d'une cha�
                 nouveau_mot += mot_clean3
         else:
             nouveau_mot += mot[i]
-    return nouveau_mot     # reconvertie la liste en chaîne de caractère
+    return nouveau_mot     # Reconvertie la liste en chaîne de caractère
+
 
 #print(ponctuation("J'en peux plus, je comprends@ pas pourquoi ça ne marche pas ce code de merde"))
 "La fonction ponctuation fonctionne"
 
 
-def separation(chaine):     # prend en paramètre une chaîne de caractère et renvoie une liste de mot
+def separation(chaine):     # Prend en paramètre une chaîne de caractère et renvoie une liste de mot
     l = []
     mot = ""
     for caractere in chaine:
-        if (caractere != ' '):      # sélectionne tous les caractères jusqu'à un espace
-            mot += caractere        # ajoute les caractères sélectionnés à une chaine de caractère
-        elif mot:       # délimite le mot
-            l.append(mot)       # si le mot n'est pas dans la chaine de caractère, l'ajouter à la liste
-            mot = ""        # réinitialise la chaine de caractère
-    if mot:     # prise en compte du dernier mot
-        l.append(mot)       # si la chaîne ne se termine pas part un espace, alors le dernier mot est ajouter
+        if (caractere != ' '):      # Sélectionne tous les caractères jusqu'à un espace
+            mot += caractere        # Ajoute les caractères sélectionnés à une chaine de caractère
+        elif mot:       # Délimite le mot
+            l.append(mot)       # Si le mot n'est pas dans la chaine de caractère, l'ajouter à la liste
+            mot = ""        # Réinitialise la chaine de caractère
+    if mot:     # Prise en compte du dernier mot
+        l.append(mot)       # Si la chaîne ne se termine pas part un espace, alors le dernier mot est ajouter
     return l
 
 
@@ -100,55 +102,57 @@ def separation(chaine):     # prend en paramètre une chaîne de caractère et r
 "La fonction separation fonctionne"
 
 
-def TF(liste):      # Score TF d'un mot
-    dico = {}
+def TF(liste):      # Score TF d'un mot, soit l'occurrence d'un mot dans un texte préalablement transformer en liste de mot
+    dico = {}       # Création du dictionnaire IDF
     for i in range(len(liste)):
         if liste[i] not in dico:
-            dico[liste[i]] = 1       # si le mot n'est pas dans la chaine de caractère, l'ajouter au dictionnaire assiocié à une valeur 1
+            dico[liste[i]] = 1       # Si le mot n'est pas dans la chaine de caractère, l'ajouter au dictionnaire assiocié à une valeur 1
         else:
-            dico[liste[i]] += 1      # sinon ajouter 1 à la valeur associée au mot
+            dico[liste[i]] += 1      # Sinon ajouter 1 à la valeur associée au mot
     return dico
+
 
 #print(TF(separation(minuscule("Je en peux plus je comprends pas pas pourquoi pas ça ne marche pas ce code de merde"))))
 "La fonction TF fonctionne"
 
 
-def IDF(directory):
-    dico = {}
+def IDF(directory):     # Score IDF d'un mot, soit l'importance d'un mot dans un ensemble de texte
+    dico = {}       # Création du dictionnaire IDF
     files = list_of_files(directory, "txt")     # Liste des noms des fichiers
     for i in range(Nombre_fichiers):
-        with open(directory + files[i], 'r') as f:
-            contenue = TF(separation(f.read()))      # Contenue de chaque fichier
-            #print(contenue)
-        for mot in contenue.keys():
+        with open(directory + files[i], 'r') as f:      # Parcours tous les fichiers texte du répertoire
+            contenue = TF(separation(f.read()))      # Contenue de chaque fichier sous forme d'un dictionnaire de mot avec leur score TF (occurrence)
+        for mot in contenue.keys():         # Parcours les clés du dictionnaire TF, soit tous les mots du texte
             if mot not in dico.keys():
-                dico[mot] = 1
+                dico[mot] = 1       # Si le mot n'est pas dans le dictionnaire IDF, alors l'initialiser avec une valeur à 1
             else:
-                dico[mot] += 1
+                dico[mot] += 1      # Si le mot est dans le dictionnaire IDF, alors ajouter 1 à sa valeur
     for mot, count in dico.items():
-        dico[mot] = float(math.log((Nombre_fichiers / count), 10))
-        #print(count)
+        dico[mot] = float(math.log((Nombre_fichiers / count), 10))      # Formule du score IDF
     return dico
 
+
 #print(Nombre_fichiers)
-print(IDF("./cleaned/"))
+#print(IDF("./cleaned/"))
 "La fonction IDF fonctionne"
 
-def mots_fichiers(directory,l):        # Créer une liste contenant tous les mots de tous les fichiers
-    files = list_of_files(directory, "txt")
+
+def mots_fichiers(directory,l):         # Créer une liste contenant tous les mots de tous les fichiers
+    files = list_of_files(directory, "txt")     # Liste des noms de tous les fichiers
     for i in range(Nombre_fichiers):
         if (i == 0):
-            with open(directory + files[i], 'r') as f:        # ouverture du premier fichier texte
-                contenue = separation(f.read())
+            with open(directory + files[i], 'r') as f:        # Ouverture du premier fichier texte
+                contenue = separation(f.read())     # Transforme le texte du fichier en liste de mot
             for j in range(len(contenue)):
-                l.append(contenue[j])       # ajoute tous les mots du premier fichier à la liste
+                l.append(contenue[j])       # Ajoute tous les mots du premier fichier à la liste
         else:
-            with open(directory + files[i], 'r') as f:        # ouverture du premier fichier texte
-                contenue = separation(f.read())
-            for j in range(len(contenue)):
+            with open(directory + files[i], 'r') as f:        # Ouverture des autres fichiers texte
+                contenue = separation(f.read())     # Transforme le texte du fichier en liste de mot
+            for j in range(len(contenue)):      # Parcours la liste de mots
                 if contenue[j] not in l:
-                    l.append(contenue[j])       # si le mot n'est pas déjà dans la liste, il est ajouté
+                    l.append(contenue[j])       # Si le mot n'est pas déjà dans la liste, il est ajouté
     return l
+
 
 liste_mots = []
 #print(mots_fichiers("./cleaned/",liste_mots))
@@ -156,24 +160,27 @@ liste_mots = []
 
 
 def matrice_tf_idf2(directory):
-    mots = IDF(directory)       # Dictionnaire des scores IDF de chaque mot
+    dico_IDF = IDF(directory)       # Dictionnaire des scores IDF de chaque mot
     files = list_of_files(directory, "txt")     # Liste des noms de chaque fichier
-    matrice = []
-    for i in mots:
-        word = i        # Correspond à chaque mot de chaque fichier
-        IDF_mot = mots[i]       # Score IDF de chaque mot de tous les fichiers
-        #print(IDF_mot)
+    matrice = []        # Création de la matrice TF-IDF
+    for i in dico_IDF:
+        mot_IDF = i        # Correspond à chaque mot de tous les fichiers (présent dans le dictionnaire IDF)
+        score_IDF = dico_IDF[i]       # Score IDF de chaque mot de tous les fichiers
         tab = []
+        occurrence = 0
         for j in range(Nombre_fichiers):
-            with open(directory + files[j], 'r') as f:
-                contenue = separation(f.read())
-            TF_mot = TF(contenue)
+            with open(directory + files[j], 'r') as f:      # Parcours tous les fichiers texte
+                contenue = separation(f.read())         # Transforme le contenue du fichier en liste de mots
+            TF_mot = TF(contenue)       # Calcul du score TF des mots du fichier texte
+            #print(TF_mot)
             for k in TF_mot:
-                if (k == word):
-                    occurrence = TF_mot[k]
-            if word not in TF_mot:
+                mot_TF = k      # Correspond au mot présent dans le fichier ouvert (présent dans le dictionnaire TF)
+                if (mot_TF == mot_IDF):      # Si le mot est à la fois dans les dictionnaires IDF et TF
+                    occurrence += 1      # Alors ajoute
+                    print(occurrence)
+            if mot_IDF not in TF_mot:
                 occurrence = 0
-            valeur = round(occurrence * IDF_mot, 2)
+            valeur = round(occurrence * score_IDF, 2)
             tab.append(valeur)
         matrice.append(tab)
     return matrice
@@ -199,11 +206,11 @@ def matrice_tf_idf(directory):
 
 
 matrice = matrice_tf_idf2("./cleaned/")
-for i in range(len(matrice)):
-    print(matrice[i])
+#for i in range(len(matrice)):
+    #print(matrice[i])
 
 
-def question(chaine):       # sépare la question en mot, tout en enlevant la ponctuation et les majuscules
+def question(chaine):       # Sépare la question en mot, tout en enlevant la ponctuation et les majuscules
     liste = separation(ponctuation(minuscule(chaine)))
     return liste
 
