@@ -1,6 +1,6 @@
-from function import *
+"""from function import *"""
 
-
+"""
 # Call of the function list_of_files
 
 directory = "./speeches"
@@ -12,8 +12,10 @@ Nombre_fichiers = len(files_names)
 
 # Call of the function extract_name
 """
+"""
 extract_name(files_names)
 print(files_names)
+"""
 """
 
 
@@ -32,6 +34,7 @@ for i in range(Nombre_fichiers):        # parcours tous les fichiers du réperto
 #print(mots_fichiers("./cleaned/"))
 #print(matrice_TF_IDF("./cleaned/"))
 
+"""
 """
 # Afficher la liste des mots les moins importants dans le corpus de documents
 def mini_TF_IDF(matrice_TF_IDF):
@@ -87,4 +90,9 @@ for i in range(Nombre_fichiers):
                 mot_chirac.append(mot)
 print(mot_chirac)
 """
+"""
 
+
+"""
+
+print(0.9030899869919434*0.9030899869919434)

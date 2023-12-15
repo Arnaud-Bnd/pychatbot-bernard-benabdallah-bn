@@ -1,5 +1,6 @@
 import math
 import os
+import random
 
 
 def list_of_files(directory, extension):
@@ -14,6 +15,7 @@ def list_of_files(directory, extension):
 directory = "./speeches"
 files_names = list_of_files(directory, "txt")
 Nombre_fichiers = len(files_names)
+
 
 
 # Extraire nom président
@@ -113,6 +115,8 @@ def TF(liste):      # Score TF d'un mot, soit l'occurrence d'un mot dans un text
 
 
 #print(TF(separation(minuscule("Je en peux plus je comprends pas pas pourquoi pas ça ne marche pas ce code de merde"))))
+#with open("./cleaned/Clean_Nomination_Sarkozy.txt", 'r') as f:
+    #print(TF(separation((minuscule(f.readline())))))
 "La fonction TF fonctionne"
 
 
@@ -120,7 +124,7 @@ def IDF(directory):     # Score IDF d'un mot, soit l'importance d'un mot dans un
     dico = {}       # Création du dictionnaire IDF
     files = list_of_files(directory, "txt")     # Liste des noms des fichiers
     for i in range(Nombre_fichiers):
-        with open(directory + files[i], 'r') as f:      # Parcours tous les fichiers texte du répertoire
+        with open(directory + files[i], 'r', encoding="utf-8") as f:      # Parcours tous les fichiers texte du répertoire
             contenue = TF(separation(f.read()))      # Contenue de chaque fichier sous forme d'un dictionnaire de mot avec leur score TF (occurrence)
         for mot in contenue.keys():         # Parcours les clés du dictionnaire TF, soit tous les mots du texte
             if mot not in dico.keys():
@@ -128,86 +132,61 @@ def IDF(directory):     # Score IDF d'un mot, soit l'importance d'un mot dans un
             else:
                 dico[mot] += 1      # Si le mot est dans le dictionnaire IDF, alors ajouter 1 à sa valeur
     for mot, count in dico.items():
+        #print(mot)
+        #print(count)
+        #print(dico[mot])
         dico[mot] = float(math.log((Nombre_fichiers / count), 10))      # Formule du score IDF
+        #print(dico[mot])
+        #print()
     return dico
 
 
 #print(Nombre_fichiers)
-#print(IDF("./cleaned/"))
+print(IDF("./cleaned/"))
 "La fonction IDF fonctionne"
 
 
-def mots_fichiers(directory,l):         # Créer une liste contenant tous les mots de tous les fichiers
+def mots_fichiers(directory):         # Créer une liste contenant tous les mots de tous les fichiers
+    l = set()       # Créer un set des mots du corpus (tous les textes)
     files = list_of_files(directory, "txt")     # Liste des noms de tous les fichiers
     for i in range(Nombre_fichiers):
-        if (i == 0):
-            with open(directory + files[i], 'r') as f:        # Ouverture du premier fichier texte
-                contenue = separation(f.read())     # Transforme le texte du fichier en liste de mot
-            for j in range(len(contenue)):
-                l.append(contenue[j])       # Ajoute tous les mots du premier fichier à la liste
-        else:
-            with open(directory + files[i], 'r') as f:        # Ouverture des autres fichiers texte
-                contenue = separation(f.read())     # Transforme le texte du fichier en liste de mot
-            for j in range(len(contenue)):      # Parcours la liste de mots
-                if contenue[j] not in l:
-                    l.append(contenue[j])       # Si le mot n'est pas déjà dans la liste, il est ajouté
+        with open(directory + files[i], 'r') as f:        # Ouverture des fichiers texte
+            contenue = separation(f.read())     # Transforme le texte du fichier ouvert en liste de mot
+        for mot in contenue:
+            l.add(mot)       # Ajoute tous les mots du fichier ouvert à la liste de mot
+    l = list(l)
     return l
 
 
-liste_mots = []
-#print(mots_fichiers("./cleaned/",liste_mots))
+liste_mots = (mots_fichiers("./cleaned/"))
+#print(liste_mots)
 "La fonction mots_fichiers fonctionne"
 
 
-def matrice_tf_idf2(directory):
-    dico_IDF = IDF(directory)       # Dictionnaire des scores IDF de chaque mot
-    files = list_of_files(directory, "txt")     # Liste des noms de chaque fichier
-    matrice = []        # Création de la matrice TF-IDF
-    for i in dico_IDF:
-        mot_IDF = i        # Correspond à chaque mot de tous les fichiers (présent dans le dictionnaire IDF)
-        score_IDF = dico_IDF[i]       # Score IDF de chaque mot de tous les fichiers
-        tab = []
-        occurrence = 0
-        for j in range(Nombre_fichiers):
-            with open(directory + files[j], 'r') as f:      # Parcours tous les fichiers texte
-                contenue = separation(f.read())         # Transforme le contenue du fichier en liste de mots
-            TF_mot = TF(contenue)       # Calcul du score TF des mots du fichier texte
-            #print(TF_mot)
-            for k in TF_mot:
-                mot_TF = k      # Correspond au mot présent dans le fichier ouvert (présent dans le dictionnaire TF)
-                if (mot_TF == mot_IDF):      # Si le mot est à la fois dans les dictionnaires IDF et TF
-                    occurrence += 1      # Alors ajoute
-                    print(occurrence)
-            if mot_IDF not in TF_mot:
-                occurrence = 0
-            valeur = round(occurrence * score_IDF, 2)
-            tab.append(valeur)
-        matrice.append(tab)
-    return matrice
-
-
 def matrice_tf_idf(directory):
+    matrice = []        # Création de la matrice TF-IDF
     scores_IDF = IDF(directory)
     files = list_of_files(directory, "txt")     # Liste des noms de chaque fichier
-    matrice = []
-
+    print(files)
     for mot, IDF_mot in scores_IDF.items():
-        tab = []
+        tab = []         # Création d'une liste correspondant à une ligne
+        tab.append(mot)         # Ajoute le mot à la liste pour savoir quelle ligne correspond à quelle mot
         for j in range(Nombre_fichiers):
-            with open(directory + files[j], 'r') as f:
-                contenue = separation(f.read())
-                TF_mot = TF(contenue)
-                occurrence = TF_mot.get(mot, 0)
-                valeur = round(occurrence * IDF_mot, 2)
-                tab.append(valeur)
-        matrice.append(tab)
-
+            with open(directory + "Clean_" + files_names[j], 'r') as f:      # Parcours tous les fichiers
+                contenue = separation(f.read())         # Sépare le texte en liste de mots
+                TF_mot = TF(contenue)       # Calcul du dictionnaire des scores TF associés aux mots du texte
+                occurrence = TF_mot.get(mot, 0)         # Score TF du mot et s'il est pas dans le dictionnaire alors son TF est 0
+                #print(occurrence)
+                valeur = round(occurrence * IDF_mot, 2)         # Calcul du vecteur de chaque mot en fonction du fichier
+                tab.append(valeur)      # Ajoute la valeur du vecteur TF-IDF à la liste (ligne)
+        matrice.append(tab)         # Ajoute la liste (ligne) à la matrice TF-IDF
     return matrice
 
 
-matrice = matrice_tf_idf2("./cleaned/")
-#for i in range(len(matrice)):
-    #print(matrice[i])
+matrice_TF_IDF = matrice_tf_idf("./cleaned/")
+for i in range(len(matrice_TF_IDF)):
+    print(matrice_TF_IDF[i])
+"La fonction matrice_tf_idf fonctionne"
 
 
 def question(chaine):       # Sépare la question en mot, tout en enlevant la ponctuation et les majuscules
@@ -219,66 +198,102 @@ def question(chaine):       # Sépare la question en mot, tout en enlevant la po
 "La fonction question fonctionne"
 
 
-def question_corpus(liste_question, liste_corpus):
-    question_restante = []
-    for mot in liste_question:
-        if (mot in liste_corpus) and (mot not in question_restante):
-            question_restante.append(mot)
+def question_corpus(liste_question, liste_corpus):      # Créer une liste contenant les mots de la question qui sont aussi dans le corpus de texte
+    question_restante = set()       # Création d'un set pour éviter les doublons
+    for mot in liste_question:      # Parcours tous les mots de la question
+        if mot in liste_corpus:
+            question_restante.add(mot)      # Ajoute le mot au set si le mot est également présent de le corpus
+    question_restante = list(question_restante)     # Transforme le set en liste
     return question_restante
 
 
-liste_question = separation("messieurs les présidents gourde mesdames messieurs en ce jour où je prends")
-liste_corpus = separation("messieurs les présidents mesdames messieurs en ce jour où je prends")
-#print(question_corpus(liste_question, liste_corpus))
+liste_question = separation("mesdames et messieurs gourde en ce jour où je prends caca officiellement mes oui fonctions de président")
+
+liste_corpus = ""
+directory = "./cleaned/"
+files = list_of_files(directory, "txt")     # Liste des noms de chaque fichier
+for i in range(Nombre_fichiers):
+    with open(directory + files[i], 'r') as f:  # Parcours tous les fichiers
+        contenue = f.read()
+        liste_corpus += contenue
+liste_corpus = separation(liste_corpus)
+#print(liste_question)
+#print(liste_corpus)
+question_restante = question_corpus(liste_question, liste_corpus)
+#print(question_restante)
 "La fonction question_corpus fonctionne"
 
 
-def question_TF_IDF(liste_question, question_restantes):
-    liste_TF = TF(liste_question)
-    #print(liste_TF)
-    #print(len(liste_question))
-    for mot in question_restantes:
-        #print(liste_TF[mot]/12)
-        liste_TF[mot] = liste_TF[mot]/12
+def question_TF_IDF(liste_question, question_restantes):        # Calcul du vecteur TF-IDF de la question
+    # Vecteur TF
+    liste_TF = TF(liste_question)       # Calcul du TF (occurrence) de chaque mot de la question
+    Score_TF = {}
+    for mot, tf in liste_TF.items():      # Parcours les mots de la question
         if mot not in question_restantes:
-            liste_TF[mot] = 0
-        #else:
-            #liste_TF[mot] = (liste_TF[mot])/(len(liste_question))
-    return liste_TF
-
-
-question_restante = question_corpus(liste_question, liste_corpus)
-#print(question_TF_IDF(liste_question, question_restante))
-
-
-#print(mots_fichiers("./cleaned/",liste_mots))
-#question = question("messieurs les présidents gourde mesdames messieurs en ce jour où je prends")
-#print(question)
-#corpus = question("messieurs les présidents gourde en ce jour où je prends")
-#print(corpus)
-#print(in_corpus(question, corpus))
-
-import random
-
-
-def ponctuation2(mot):
-    nouveau_mot = ""
-    pas_permis = "!#\"$%&()*+,./:;<=>?@[\\]^{|}≈~-_—–\n"
-    apostrophe_list = "'’`‘"
-
-    for i in range(len(mot)):
-        if mot[i] in pas_permis:
-            continue
-        elif mot[i] in apostrophe_list and i > 0:  # Vérifie si c'est une apostrophe et si elle n'est pas en première position
-            var = random.randint(1, 2)
-            if (mot[i - 1] != 'l') or (var % 2 == 0):
-                nouveau_mot += 'e'
-            else:
-                nouveau_mot += 'a'
+            Score_TF[mot] = 0       # Si le mot n'est pas dans le corpus, alors sont TF est nul car inintéressant
         else:
-            nouveau_mot += mot[i]
-    return nouveau_mot
+            Score_TF[mot] = (tf)       # Sinon, le TF du mot est égale à son occurrence divisée par le nombre de mot de la question
+    # Vecteur IDF
+    dico_IDF = IDF("./cleaned/")
+    Score_IDF = {}
+    for mot, value in liste_TF.items():
+        if mot in dico_IDF:
+            Score_IDF[mot] = dico_IDF[mot]
+        else:
+            Score_IDF[mot] = 0
+    # Vecteur TF-IDF
+    vect_TF_IDF = []
+    for mot, valeur in Score_TF.items():
+        tab = []
+        tab.append(mot)
+        if mot not in vect_TF_IDF:
+            TF_IDF_score = Score_TF[mot] * Score_IDF[mot]
+            tab.append(TF_IDF_score)
+        vect_TF_IDF .append(tab)
+    return vect_TF_IDF
 
 
-#print(ponctuation2("J'en peux plus, je comprends@ pas pourquoi ça ne marche pas ce code de merde"))
+TF_IDF_quest = question_TF_IDF(liste_question, question_restante)
+#print(TF_IDF_quest)
+"La fonction question_TF_IDF est sensé marcher"
 
+
+def produit_scalaire(A, B, doc):
+    somme = 0
+    for i in range(len(A)):
+        for j in range(len(B)):
+            if A[i][0] == B[j][0]:
+                somme += (A[i][1] * B[i][doc])
+    return somme
+
+
+scalaire_quest = produit_scalaire(TF_IDF_quest, matrice_TF_IDF,1)
+#print(scalaire_quest)
+
+
+def norme_vecteur(A):
+    somme = 0
+    for i in range(len(A)):
+        somme += A[i][1] ** 2
+    somme = math.sqrt(somme)
+    return somme
+
+
+norme_question = norme_vecteur(TF_IDF_quest)
+#print(norme_question)
+
+norme_corpus = norme_vecteur(matrice_TF_IDF)
+#print(norme_corpus)
+
+def similarité(A, B, doc):
+    res = produit_scalaire(A, B, doc) / (norme_vecteur(A) * norme_vecteur(B))
+    return res
+
+
+#for i in range(8):
+    #print(similarité(TF_IDF_quest, matrice_TF_IDF,i + 1))
+
+#print(files_names)
+
+def plus_pertinent(matrice, tf_idf_quest, file_name):
+    pass
