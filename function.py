@@ -124,7 +124,7 @@ def IDF(directory):     # Score IDF d'un mot, soit l'importance d'un mot dans un
     dico = {}       # Création du dictionnaire IDF
     files = list_of_files(directory, "txt")     # Liste des noms des fichiers
     for i in range(Nombre_fichiers):
-        with open(directory + files[i], 'r', encoding="utf-8") as f:      # Parcours tous les fichiers texte du répertoire
+        with open(directory + "Clean_" + files_names[i], 'r', encoding="utf-8") as f:      # Parcours tous les fichiers texte du répertoire
             contenue = TF(separation(f.read()))      # Contenue de chaque fichier sous forme d'un dictionnaire de mot avec leur score TF (occurrence)
         for mot in contenue.keys():         # Parcours les clés du dictionnaire TF, soit tous les mots du texte
             if mot not in dico.keys():
@@ -142,7 +142,7 @@ def IDF(directory):     # Score IDF d'un mot, soit l'importance d'un mot dans un
 
 
 #print(Nombre_fichiers)
-print(IDF("./cleaned/"))
+#print(IDF("./cleaned/"))
 "La fonction IDF fonctionne"
 
 
@@ -150,7 +150,7 @@ def mots_fichiers(directory):         # Créer une liste contenant tous les mots
     l = set()       # Créer un set des mots du corpus (tous les textes)
     files = list_of_files(directory, "txt")     # Liste des noms de tous les fichiers
     for i in range(Nombre_fichiers):
-        with open(directory + files[i], 'r') as f:        # Ouverture des fichiers texte
+        with open(directory + "Clean_" + files_names[i], 'r') as f:        # Ouverture des fichiers texte
             contenue = separation(f.read())     # Transforme le texte du fichier ouvert en liste de mot
         for mot in contenue:
             l.add(mot)       # Ajoute tous les mots du fichier ouvert à la liste de mot
@@ -167,7 +167,7 @@ def matrice_tf_idf(directory):
     matrice = []        # Création de la matrice TF-IDF
     scores_IDF = IDF(directory)
     files = list_of_files(directory, "txt")     # Liste des noms de chaque fichier
-    print(files)
+    #print(files_names)
     for mot, IDF_mot in scores_IDF.items():
         tab = []         # Création d'une liste correspondant à une ligne
         tab.append(mot)         # Ajoute le mot à la liste pour savoir quelle ligne correspond à quelle mot
@@ -184,8 +184,8 @@ def matrice_tf_idf(directory):
 
 
 matrice_TF_IDF = matrice_tf_idf("./cleaned/")
-for i in range(len(matrice_TF_IDF)):
-    print(matrice_TF_IDF[i])
+#for i in range(len(matrice_TF_IDF)):
+    #print(matrice_TF_IDF[i])
 "La fonction matrice_tf_idf fonctionne"
 
 
@@ -198,7 +198,8 @@ def question(chaine):       # Sépare la question en mot, tout en enlevant la po
 "La fonction question fonctionne"
 
 
-def question_corpus(liste_question, liste_corpus):      # Créer une liste contenant les mots de la question qui sont aussi dans le corpus de texte
+def question_corpus(question, liste_corpus):      # Créer une liste contenant les mots de la question qui sont aussi dans le corpus de texte
+    liste_question = separation(question)
     question_restante = set()       # Création d'un set pour éviter les doublons
     for mot in liste_question:      # Parcours tous les mots de la question
         if mot in liste_corpus:
@@ -219,12 +220,14 @@ for i in range(Nombre_fichiers):
 liste_corpus = separation(liste_corpus)
 #print(liste_question)
 #print(liste_corpus)
-question_restante = question_corpus(liste_question, liste_corpus)
+#question_restante = question_corpus(liste_question, liste_corpus)
 #print(question_restante)
 "La fonction question_corpus fonctionne"
 
 
-def question_TF_IDF(liste_question, question_restantes):        # Calcul du vecteur TF-IDF de la question
+def question_TF_IDF(question):        # Calcul du vecteur TF-IDF de la question
+    liste_question = separation(question)
+    question_restantes = question_corpus(separation(question), liste_corpus)
     # Vecteur TF
     liste_TF = TF(liste_question)       # Calcul du TF (occurrence) de chaque mot de la question
     Score_TF = {}
@@ -253,9 +256,9 @@ def question_TF_IDF(liste_question, question_restantes):        # Calcul du vect
     return vect_TF_IDF
 
 
-TF_IDF_quest = question_TF_IDF(liste_question, question_restante)
+TF_IDF_quest = question_TF_IDF(liste_question)
 #print(TF_IDF_quest)
-"La fonction question_TF_IDF est sensé marcher"
+"La fonction question_TF_IDF est censée marcher"
 
 
 def produit_scalaire(A, B, doc):
@@ -267,33 +270,71 @@ def produit_scalaire(A, B, doc):
     return somme
 
 
-scalaire_quest = produit_scalaire(TF_IDF_quest, matrice_TF_IDF,1)
+#scalaire_quest = produit_scalaire(TF_IDF_quest, matrice_TF_IDF,1)
 #print(scalaire_quest)
+"La fonction produit_scalaire est censée fonctionner"
 
 
-def norme_vecteur(A):
+def norme_vecteur(A, doc):
     somme = 0
     for i in range(len(A)):
-        somme += A[i][1] ** 2
+        somme += A[i][doc] ** 2
     somme = math.sqrt(somme)
     return somme
 
 
-norme_question = norme_vecteur(TF_IDF_quest)
+#norme_question = norme_vecteur(TF_IDF_quest, 1)
 #print(norme_question)
+"La fonction norme_vecteur fonctionne pour le vecteur de la question"
 
-norme_corpus = norme_vecteur(matrice_TF_IDF)
-#print(norme_corpus)
+
+#for i in range(len(files_names)):
+    #norme_corpus = norme_vecteur(matrice_TF_IDF, i + 1)
+    #print(files_names[i])
+    #print(norme_corpus)
+    #print()
+"La fonction norme_vecteur fonctionne pour les vecteurs de la matrice"
+
 
 def similarité(A, B, doc):
-    res = produit_scalaire(A, B, doc) / (norme_vecteur(A) * norme_vecteur(B))
+    res = produit_scalaire(A, B, doc) / (norme_vecteur(A, 1) * norme_vecteur(B, doc))
     return res
 
 
 #for i in range(8):
-    #print(similarité(TF_IDF_quest, matrice_TF_IDF,i + 1))
+    #similarite_doc = similarité(TF_IDF_quest, matrice_TF_IDF,i + 1)
+    #print(files_names[i])
+    #print(similarite_doc)
+    #print()
+"La fonction similarité est censée fonctionner"
 
-#print(files_names)
 
-def plus_pertinent(matrice, tf_idf_quest, file_name):
-    pass
+def plus_pertinent(matrice, tf_idf_quest, liste_noms_fichiers):
+    plus_similaire = ""
+    maxi = 0
+    for i in range(len(liste_noms_fichiers)):
+        similaire = similarité(tf_idf_quest, matrice, i + 1)
+        if (maxi < similaire):
+            maxi = similaire
+            plus_similaire = liste_noms_fichiers[i]
+    return plus_similaire
+
+
+question = "Peux-tu me dire comment une nation peut-elle prendre soin du climat ?"
+TF_IDF_quest1 = question_TF_IDF(question)
+#most_pertinent = plus_pertinent(matrice_TF_IDF, TF_IDF_quest1, files_names)
+#print(most_pertinent)
+
+
+def réponse(question):
+    tf_idf_question = question_TF_IDF(question)
+    res = ""
+    maxi = 0
+    for i in range(len(tf_idf_question)):
+        if (maxi < tf_idf_question[i][1]):
+            maxi = tf_idf_question[i][1]
+            res = tf_idf_question[i][0]
+    return res
+
+
+print(réponse(question))
