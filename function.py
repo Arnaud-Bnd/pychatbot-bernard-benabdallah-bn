@@ -337,4 +337,5 @@ def réponse(question):
     return res
 
 
+
 print(réponse(question))
