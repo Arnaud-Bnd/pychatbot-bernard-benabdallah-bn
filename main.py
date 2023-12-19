@@ -1,4 +1,4 @@
-"""from function import *"""
+from function import *
 
 """
 # Call of the function list_of_files
@@ -95,4 +95,72 @@ print(mot_chirac)
 
 """
 
-print(0.9030899869919434*0.9030899869919434)
+def mot_pas_important(M):
+    l=[]
+    for i in range(len(M)):
+        somme = 0
+        for j in range(1,len(M[i])):
+            somme += M[i][j]
+        if (somme == 0):
+            l.append(M[i][0])
+    return l
+
+matrice = matrice_tf_idf("./cleaned/")
+#print(mot_pas_important(matrice))
+"La fonction mot_pas_important est censé marché"
+
+
+def mot_important(M):
+    l=[]
+    for i in range(len(M)):
+        somme = 0
+        for j in range(1,len(M[i])):
+            somme += M[i][j]
+        if (somme >= 4):
+            l.append(M[i][0])
+    return l
+
+#print(mot_important(matrice))
+
+def mots_chirac1(matrice_tfidf, seuil=4):
+    mots_importants = [mot for mot, score in zip(matrice_tfidf.get_feature_names_out(), matrice_tfidf.data) if score >= seuil]
+    mots_importants = sorted(mots_importants, key=lambda mot: matrice_tfidf.get_feature_names_out().index(mot))
+    return mots_importants
+
+
+def mots_chirac(mot_pas_importants, seuil):
+    texte = ""
+    for i in range(2):
+        with open("./cleaned/Clean_Nomination_Chirac" + str(i + 1) + ".txt", 'r') as f:
+            texte += f.read()
+    texte = separation(texte)
+    texte_TF = TF(texte)
+    liste = []
+    for mot, valeur in texte_TF.items():
+        if (valeur >= seuil):
+            liste.append(mot)
+    return liste
+
+
+#print(mots_chirac(mot_pas_important(matrice), 4))
+
+
+def president_nation(tfidf_scores_par_president):
+    # Filtrer les présidents qui ont parlé de la "Nation"
+    presidents_avec_nation = [president for president, scores in tfidf_scores_par_president.items() if "Nation" in scores]
+    # Si aucun président n'a mentionné "Nation", retourner une liste vide
+    if not presidents_avec_nation:
+        return []
+    # Trouver le président qui a le plus mentionné "Nation"
+    president_plus_frequent = max(presidents_avec_nation, key=lambda x: tfidf_scores_par_president[x]["Nation"])
+    return president_plus_frequent
+
+
+#print(president_nation(matrice))
+
+def president_ecologie(tfidf_scores_par_president):
+    # Filtrer les présidents qui ont parlé du "climat" et/ou de "l'écologie"
+    presidents_avec_climat_ecologie = [president for president, scores in tfidf_scores_par_president.items() if "climat" in scores or "écologie" in scores]
+    return presidents_avec_climat_ecologie
+
+#print(president_ecologie(matrice))
